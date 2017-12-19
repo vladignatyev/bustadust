@@ -44,6 +44,10 @@ function crashPointFromHash(serverSeed) {
     var h = parseInt(hash.slice(0,52/4),16);
     var e = Math.pow(2,52);
 
+    // console.log(hash.slice(0,52/4));
+
+    // console.log(h, e);
+
     return (Math.floor((100 * e - h) / (e - h))/100).toFixed(2);
 };
 
@@ -56,7 +60,7 @@ function generateOutcomes(count, currentHash){
     for(var i=0; i < count; i++){
         var gameHash = (lastHash!=""?genGameHash(lastHash):hash);
         var gameCrash = Number(crashPointFromHash((lastHash!=""?genGameHash(lastHash):hash)));
-        result.push(gameCrash);
+        result.push([gameCrash, lastHash]);
 
         lastHash = gameHash;
     }
@@ -121,9 +125,10 @@ function applyToOutcomes2(currentHash, func) {
   var result = false;
 
   while(result == false) {
-    var gameCrash = Number(crashPointFromHash(latestGamehash))
     var currentGameHash = latestGamehash
-    var previousGameHash = genGameHash(latestGamehash)
+    var gameCrash = Number(crashPointFromHash(currentGameHash))
+
+    var previousGameHash = genGameHash(currentGameHash)
     latestGamehash = previousGameHash
 
     result = !func(gameCrash, gameNumber, currentGameHash, previousGameHash);
